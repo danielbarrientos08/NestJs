@@ -14,6 +14,7 @@ import {
 // import { Response, Request } from 'express';
 import { ProductsService } from './../services/products.service';
 import { ParseIntPipe } from '../common/parse-int.pipe';
+import { CreateProductDto, UpdateProductDto } from './../dtos/products.dtos';
 
 @Controller('products')
 export class ProductsController {
@@ -40,7 +41,7 @@ export class ProductsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() payload: any) {
+  create(@Body() payload: CreateProductDto) {
     const newProduct = this.productService.create(payload);
     return {
       newProduct,
@@ -48,7 +49,7 @@ export class ProductsController {
   }
 
   @Put('/:id')
-  update(@Param('id') id: number, @Body() payload: any) {
+  update(@Param('id') id: number, @Body() payload: UpdateProductDto) {
     return this.productService.update(id, payload);
   }
 
