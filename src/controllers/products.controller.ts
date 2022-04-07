@@ -9,24 +9,24 @@ import {
   Post,
   Put,
   Query,
-  Res,
-  Req,
 } from '@nestjs/common';
 
-import { Response, Request } from 'express';
+// import { Response, Request } from 'express';
+import { ProductsService } from './../services/products.service';
+import { ParseIntPipe } from '../common/parse-int.pipe';
 
 @Controller('products')
 export class ProductsController {
+  constructor(private productService: ProductsService) {}
+
   @Get('/filter')
   getProductFilter() {
     return 'soy un filter';
   }
 
   @Get('/:productId')
-  getOne(@Res() response: Response, @Param('productId') productId: string) {
-    response.status(200).json({
-      message: `product ${productId}`,
-    });
+  getOne(@Param('productId', ParseIntPipe) productId: number) {
+    return this.productService.findOne(productId);
   }
 
   @Get()
@@ -35,26 +35,21 @@ export class ProductsController {
     @Query('offset') offset = 0,
     @Query('brand') brand: string,
   ) {
-    return {
-      message: `limit ${limit} offset ${offset} brand: ${brand}`,
-    };
+    return this.productService.findAll();
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() payload: any) {
+    const newProduct = this.productService.create(payload);
     return {
-      message: 'accion para crear',
-      payload,
+      newProduct,
     };
   }
 
   @Put('/:id')
   update(@Param('id') id: number, @Body() payload: any) {
-    return {
-      message: `Actualizando item ${id}`,
-      payload,
-    };
+    return this.productService.update(id, payload);
   }
 
   @Delete('/:id')
