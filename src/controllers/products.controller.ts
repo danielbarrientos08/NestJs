@@ -3,11 +3,17 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
   Query,
+  Res,
+  Req,
 } from '@nestjs/common';
+
+import { Response, Request } from 'express';
 
 @Controller('products')
 export class ProductsController {
@@ -17,8 +23,10 @@ export class ProductsController {
   }
 
   @Get('/:productId')
-  getOne(@Param('productId') productId: string) {
-    return `product ${productId}`;
+  getOne(@Res() response: Response, @Param('productId') productId: string) {
+    response.status(200).json({
+      message: `product ${productId}`,
+    });
   }
 
   @Get()
@@ -33,6 +41,7 @@ export class ProductsController {
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() payload: any) {
     return {
       message: 'accion para crear',
